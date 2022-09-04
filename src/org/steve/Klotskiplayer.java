@@ -1,6 +1,6 @@
 package org.steve;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -17,7 +17,7 @@ public class Klotskiplayer {
     public static int bfs() {
         Queue<int[][]> queue= new LinkedList();
         Queue<Integer> depthQueue = new LinkedList<>();
-        ArrayList<int[][]> visited = new ArrayList<>();
+        HashSet<KlotskiState> visited = new HashSet<KlotskiState>();
         int[][] e = {
                 {2, 1, 1, 2},
                 {2, 1, 1, 2},
@@ -25,13 +25,14 @@ public class Klotskiplayer {
                 {2, 4, 4, 2},
                 {0, 4, 4, 0}
         };
+        KlotskiState initialState = new KlotskiState(e);
         queue.add(e);
         depthQueue.add(0);
-        visited.add(e);
+        visited.add(initialState);
         while (!queue.isEmpty()) {
             int[][] node;
             int depth;
-            boolean checked[][] = new boolean[BOARD_HEIGHT][BOARD_WIDTH];
+            boolean[][] checked = new boolean[BOARD_HEIGHT][BOARD_WIDTH];
             node = queue.remove();
             depth = depthQueue.remove();
             System.out.println(String.format("queue size %d, depth = %d", queue.size(), depth));
@@ -89,7 +90,7 @@ public class Klotskiplayer {
                         boolean found = isVisited(visited, neighbor);
                         if (!found) {
                             queue.add(neighbor);
-                            visited.add(neighbor);
+                            visited.add(new KlotskiState(neighbor));
                             depthQueue.add(depth + 1);
                         }
                     }
@@ -107,7 +108,7 @@ public class Klotskiplayer {
                         boolean found = isVisited(visited, neighbor);
                         if (!found) {
                             queue.add(neighbor);
-                            visited.add(neighbor);
+                            visited.add(new KlotskiState(neighbor));
                             depthQueue.add(depth + 1);
                         }
                     }
@@ -124,7 +125,7 @@ public class Klotskiplayer {
                         boolean found = isVisited(visited, neighbor);
                         if(!found) {
                             queue.add(neighbor);
-                            visited.add(neighbor);
+                            visited.add(new KlotskiState(neighbor));
                             depthQueue.add(depth + 1);
                         }
                     }
@@ -141,7 +142,7 @@ public class Klotskiplayer {
                         boolean found = isVisited(visited, neighbor);
                         if(!found) {
                             queue.add(neighbor);
-                            visited.add(neighbor);
+                            visited.add(new KlotskiState(neighbor));
                             depthQueue.add(depth + 1);
                         }
                     }
@@ -152,34 +153,16 @@ public class Klotskiplayer {
         return Integer.MAX_VALUE;
     }
 
-    private static boolean isVisited(ArrayList<int[][]> visited, int[][] neighbor) {
-        boolean found = false;
-        for (int[][] variation : visited) {
-            if (isSame(neighbor, variation)) {
-                found = true;
-                break;
-            }
-        }
-        return found;
+    private static boolean isVisited(HashSet<KlotskiState> visited, int[][] neighbor) {
+        KlotskiState newKlotskiState = new KlotskiState(neighbor);
+        return visited.contains(newKlotskiState);
     }
 
-    public static void copyBoard (int[][] source, int[][] dest) {
+    private static void copyBoard (int[][] source, int[][] dest) {
         for (int i = 0; i < source.length; i++) {
             for (int j = 0; j < source[0].length; j++) {
                 dest[i][j] = source[i][j];
             }
         }
-    }
-
-    public static boolean isSame(int[][] a, int[][] b) {
-
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < a[0].length; j++) {
-                if (a[i][j] != b[i][j]) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 }
